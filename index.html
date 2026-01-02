@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>HYPERLANE RUNNER</title>
+
+<link rel="stylesheet" href="design.css">
+</head>
+
+<body>
+
+<div id="scoreBox">Score: <span id="score">0</span></div>
+
+<div id="mainMenu" class="menu">
+  <h1>HYPERLANE RUNNER</h1>
+
+  <button onclick="startGame()">Play</button>
+
+  <div style="margin-top:20px; text-align:center; font-size:14px; opacity:0.85;">
+    Developed by <strong>Salman</strong> (aka <strong>Numaan Khan</strong>)<br>
+    <a href="https://github.com/Numaan28" target="_blank" style="color:#FFD54F; text-decoration:none;">
+      GitHub
+    </a>
+    &nbsp;|&nbsp;
+    <a href="https://numaan28.github.io/numaan-portfolio/" target="_blank" style="color:#FFD54F; text-decoration:none;">
+      Portfolio
+    </a>
+  </div>
+</div>
+
+
+<div id="pauseMenu" class="menu">
+  <h1>Paused</h1>
+  <button onclick="resumeGame()">Resume</button>
+  <button onclick="restartGame()">Restart</button>
+  <button onclick="goToMenu()">Main Menu</button>
+</div>
+
+<div id="gameOverMenu" class="menu">
+  <h1>Game Over</h1>
+  <button onclick="restartGame()">Restart</button>
+  <button onclick="goToMenu()">Main Menu</button>
+</div>
+
+<canvas id="game"></canvas>
+
+<script src="brain.js"></script>
+</body>
+</html>
