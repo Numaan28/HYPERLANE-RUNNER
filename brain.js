@@ -44,8 +44,6 @@ let farX = 0;
 let holes = [];
 let spikes = [];
 let nextSpikeX = canvas.width + 400;
-let nextHoleX = canvas.width + 500;
-let spawnCooldown = 0;
 
 //  constant hole size (no tiny holes)
 const HOLE_WIDTH = 170;
@@ -78,49 +76,29 @@ function getRandomLandGap() {
   return rand(minLand, maxLand);
 }
 
-function spawnHoleOrSpike() {
-  const difficulty = Math.min(speed / 12, 3); // scales up to 3×
+function spawnHole() {
+  const spawnSpike = Math.random() < 0.4; // 40% spike, 60% hole
 
-  const chance = Math.random();
-
-  // 🔴 45% hole, 40% spike, 15% combo
-  if (chance < 0.45) {
-    // HOLE
-    holes.push({
-      x: nextHoleX,
-      width: HOLE_WIDTH
-    });
-
-    nextHoleX += HOLE_WIDTH + rand(
-      160 / difficulty,
-      300 / difficulty
-    );
-
-  } else if (chance < 0.85) {
-    // SPIKE
+  if (spawnSpike) {
+    //  spawn spike only
     spikes.push({
       x: nextHoleX,
       size: 28
     });
 
-    nextHoleX += rand(140, 220);
+    // give enough land after spike
+    nextHoleX += 180 + rand(80, 140);
 
   } else {
-    // 🔥 COMBO: hole → short land → spike
+    // spawn hole only
     holes.push({
       x: nextHoleX,
       width: HOLE_WIDTH
     });
 
-    spikes.push({
-      x: nextHoleX + HOLE_WIDTH + rand(90, 130),
-      size: 28
-    });
-
-    nextHoleX += HOLE_WIDTH + rand(180, 260);
+    nextHoleX += HOLE_WIDTH + getRandomLandGap();
   }
 }
-
 
 /* ===== BACKGROUND ===== */
 function drawBackground() {
@@ -212,7 +190,9 @@ function loop() {
     
     score += speed * 0.08;
     // spawn spikes frequently
-
+if (!spikes.length || spikes[spikes.length - 1].x < canvas.width - 180) {
+  spawnSpike();
+}
 
 
     // move holes first (so swept check uses correct dx)
@@ -224,19 +204,13 @@ spikes = spikes.filter(s => s.x + s.size > -100);
 
 
     // spawn logic (random gaps handled inside spawnHole)
-     spawnCooldown -= speed;
-
-if (spawnCooldown <= 0) {
-  spawnHoleOrSpike();
-
-  // faster speed = faster spawns
-  spawnCooldown = rand(
-    260 / (speed / 10),
-    420 / (speed / 10)
-  );
-}
-
-    
+    if (!holes.length) {
+      // spawnHole();
+    } else {
+      // keep enough buffer ahead
+      const last = holes[holes.length - 1];
+      // if (last.x < canvas.width + 250) spawnHole();
+    }
     holes = holes.filter(h => h.x + h.width > -200);
     spikes = spikes.filter(s => s.x + s.size > -100);
 
@@ -423,4 +397,3 @@ canvas.addEventListener("touchstart", e => {
 /* ===== START ===== */
 document.getElementById("mainMenu").style.display = "flex";
 requestAnimationFrame(loop);
-
