@@ -12,8 +12,8 @@ const player = {
   width: 50,
   height: 50,
   velocityY: 0,
-  gravity: 1.1,
-  jumpForce: -22,
+  gravity: 0.9,
+  jumpForce: -26,
   onGround: true,
   rotation: 0
 };
