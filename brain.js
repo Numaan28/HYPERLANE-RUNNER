@@ -19,7 +19,7 @@ const player = {
 };
 
 /* ===== GAME STATE ===== */
-let speed = 10;
+let speed = 7;
 let score = 0;
 let running = false;
 let paused = false;
@@ -309,7 +309,7 @@ function hideMenus() {
 }
 
 function reset() {
-  speed = 10;
+  speed = 7;
   score = 0;
   holes = [];
   spikes = [];
