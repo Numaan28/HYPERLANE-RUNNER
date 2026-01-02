@@ -12,14 +12,14 @@ const player = {
   width: 50,
   height: 50,
   velocityY: 0,
-  gravity: 0.9,
-  jumpForce: -26,
+  gravity: 1.1,
+  jumpForce: -23,
   onGround: true,
   rotation: 0
 };
 
 /* ===== GAME STATE ===== */
-let speed = 7;
+let speed = 10;
 let score = 0;
 let running = false;
 let paused = false;
@@ -342,7 +342,7 @@ function reset() {
   spikes = [];
 nextSpikeX = canvas.width + 400;
 
-  speed = 7;
+  speed = 10;
   score = 0;
   holes = [];
   spikes = [];
