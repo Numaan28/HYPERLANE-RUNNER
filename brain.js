@@ -43,7 +43,7 @@ let farX = 0;
 // holes
 let holes = [];
 let spikes = [];
-let nextHoleX = canvas.width + 500;
+let nextSpikeX = canvas.width + 400;
 
 //  constant hole size (no tiny holes)
 const HOLE_WIDTH = 170;
@@ -172,6 +172,14 @@ function isPlayerOverAnyHoleSwept(dx) {
   }
   return false;
 }
+function spawnSpike() {
+  spikes.push({
+    x: nextSpikeX,
+    size: 28
+  });
+
+  nextSpikeX += 80 + Math.random() * 80; // more frequent spikes
+}
 
 /* ===== GAME LOOP ===== */
 function loop() {
@@ -181,20 +189,27 @@ function loop() {
   if (running && !paused && !gameOver) {
     
     score += speed * 0.08;
+    // spawn spikes frequently
+if (!spikes.length || spikes[spikes.length - 1].x < canvas.width - 180) {
+  spawnSpike();
+}
+
 
     // move holes first (so swept check uses correct dx)
     const holeDx = speed * 0.7;
     holes.forEach(h => h.x -= holeDx);
-    spikes.forEach(s => s.x -= holeDx);
+    spikes.forEach(s => s.x -= speed * 0.7);
+spikes = spikes.filter(s => s.x + s.size > -100);
+
 
 
     // spawn logic (random gaps handled inside spawnHole)
     if (!holes.length) {
-      spawnHole();
+      // spawnHole();
     } else {
       // keep enough buffer ahead
       const last = holes[holes.length - 1];
-      if (last.x < canvas.width + 250) spawnHole();
+      // if (last.x < canvas.width + 250) spawnHole();
     }
     holes = holes.filter(h => h.x + h.width > -200);
     spikes = spikes.filter(s => s.x + s.size > -100);
@@ -232,17 +247,32 @@ spikes.forEach(s => {
   ) {
     triggerGameOver();
   }
+  // 🔺 STEP 6 — spike collision
+spikes.forEach(s => {
+  if (
+    player.x + player.width > s.x &&
+    player.x < s.x + s.size &&
+    player.y + player.height >= groundY - s.size
+  ) {
+    triggerGameOver();
+  }
+});
+
 });
 
   }
 
   // draw ground segments with holes
-  ctx.fillStyle = "#444";
-  let lastX = 0;
-  holes.forEach(h => {
-    ctx.fillRect(lastX, groundY, h.x - lastX, 8);
-    lastX = h.x + h.width;
-  });
+  ctx.fillStyle = "#D32F2F";
+spikes.forEach(s => {
+  ctx.beginPath();
+  ctx.moveTo(s.x, groundY);
+  ctx.lineTo(s.x + s.size / 2, groundY - s.size);
+  ctx.lineTo(s.x + s.size, groundY);
+  ctx.closePath();
+  ctx.fill();
+});
+
 
   ctx.fillRect(lastX, groundY, canvas.width - lastX, 8);
   // draw spikes
@@ -309,6 +339,9 @@ function hideMenus() {
 }
 
 function reset() {
+  spikes = [];
+nextSpikeX = canvas.width + 400;
+
   speed = 7;
   score = 0;
   holes = [];
@@ -317,8 +350,8 @@ function reset() {
   nextHoleX = canvas.width + 500;
 
   // spawn a couple ahead so start feels smooth + random already
-  spawnHole();
-  spawnHole();
+ 
+  
 
   player.y = groundY - player.height;
   player.velocityY = 0;
